@@ -1,9 +1,10 @@
-version: 2
+version: 2.1
 executors:
    node:
       working_directory: ~/app
       docker:
          - image: circleci/node:10.15.3
+      shell: /bin/bash
 jobs:
    build_server:
       executor: node
