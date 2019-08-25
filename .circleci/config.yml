@@ -31,6 +31,6 @@ workflows:
    build_that_server:
       jobs:
          - build_server
-         - test
+         - test:
             requires:
                - build_server
