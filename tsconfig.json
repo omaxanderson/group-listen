@@ -1,0 +1,13 @@
+{
+   "compilerOptions": {
+      "module": "commonjs",
+      "moduleResolution": "Node",
+      "esModuleInterop": true,
+      "outDir": "./build",
+      "rootDir": "./src"
+   },
+   "exclude": [
+      "node_modules",
+      "**/*.spec.ts"
+   ]
+}
