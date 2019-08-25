@@ -19,8 +19,8 @@ jobs:
             paths:
                - ./node_modules
          - run:
-            name: my_command
-            command: echo "Hello world"
+            name: test
+            command: npm run test
 workflows:
    version: 2
    build_that_server:
