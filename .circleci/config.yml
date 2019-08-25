@@ -24,7 +24,8 @@ jobs:
                - ./node_modules
          - persist_to_workspace:
             root: ~/app
-            paths: - .
+            paths:
+               - .
    test:
       executor: node
       steps:
