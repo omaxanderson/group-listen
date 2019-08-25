@@ -23,6 +23,7 @@ jobs:
             paths:
                - ./node_modules
    test:
+      executor: node
       steps:
          - run:
             name: test
