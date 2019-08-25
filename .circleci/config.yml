@@ -3,7 +3,7 @@ jobs:
    build_server:
       working_directory: ~/app
       docker:
-         - image: circleci/node:4.8.2
+         - image: circleci/node:10.15.3
       steps:
          - checkout
          - run:
