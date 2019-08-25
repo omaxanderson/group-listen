@@ -1,23 +1,27 @@
 version: 2
 jobs:
-   one:
+   build_server:
+      working_directory: /app
       docker:
-         - image: circleci/ruby:2.4.1
+         - image: circleci/node:4.8.2
       steps:
          - checkout
-         - run: echo "one"
-   two:
-      docker:
-         - image: circleci/ruby:2.4.1
-      steps:
-         - checkout
-         - run: echo "two"
+         - run:
+            name: update-npm
+            command: 'sudo npm install -g npm@latest'
+         - restore_cache:
+            key: dependency-cache-{{ checksum "package.json" }}
+         - run:
+            name: install-npm
+            command: npm install
+         - save_cache:
+            key: dependency-cache-{{ checksum "package.json" }}
+            paths:
+               - ./node_modules
+         - my_command:
+            name: my_command
+            command: echo "Hello world"
 workflows:
    version: 2
-   one_and_two:
-      jobs:
-         - one
-         - two:
-            requires:
-               - one
-
+   jobs:
+      - build_server
