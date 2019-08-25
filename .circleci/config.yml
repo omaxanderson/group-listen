@@ -1,9 +1,12 @@
 version: 2
-jobs:
-   build_server:
+executors:
+   node:
       working_directory: ~/app
       docker:
          - image: circleci/node:10.15.3
+jobs:
+   build_server:
+      executor: node
       steps:
          - checkout
          - run:
@@ -28,3 +31,6 @@ workflows:
    build_that_server:
       jobs:
          - build_server
+         - test
+            requires:
+               - build_server
