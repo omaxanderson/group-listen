@@ -1,0 +1,23 @@
+{
+  "name": "group-listen",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/omaxanderson/group-listen.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/omaxanderson/group-listen/issues"
+  },
+  "homepage": "https://github.com/omaxanderson/group-listen#readme",
+  "dependencies": {
+    "fastify": "^2.7.1",
+    "typescript": "^3.5.3"
+  }
+}
