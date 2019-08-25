@@ -23,5 +23,6 @@ jobs:
             command: echo "Hello world"
 workflows:
    version: 2
-   jobs:
-      - build_server
+   build_that_server:
+      jobs:
+         - build_server
