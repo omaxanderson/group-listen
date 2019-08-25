@@ -18,7 +18,7 @@ jobs:
             key: dependency-cache-{{ checksum "package.json" }}
             paths:
                - ./node_modules
-         - my_command:
+         - run:
             name: my_command
             command: echo "Hello world"
 workflows:
