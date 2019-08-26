@@ -22,6 +22,8 @@
     "@types/node": "^12.7.2",
     "babel": "^6.23.0",
     "fastify": "^2.7.1",
+    "mysql": "^2.17.1",
+    "redis": "^2.8.0",
     "typescript": "^3.5.3"
   },
   "devDependencies": {
