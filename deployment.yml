@@ -1,0 +1,21 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+   name: group-listen-deployment
+spec:
+   replicas: 2
+   selector:
+      matchLabels:
+         app: group-listen
+   template:
+      metadata:
+         labels:
+            app: group-listen
+      spec:
+         containers:
+            - name: group-listen
+              image: omaxanderson/group-listen
+              imagePullPolicy: Always
+              ports:
+                 - containerPort: 3000
+
