@@ -6,10 +6,10 @@ const server: fastify.FastifyInstance<Server, IncomingMessage, ServerResponse> =
 const port: number = Number(process.env.PORT || 3000);
 
 server.get('/ping', (req, res) => {
-   res.send({ message: 'pong' });
+   res.send({ message: 'poooong' });
 });
 
-server.listen(port, (err, address) => {
+server.listen(port, '0.0.0.0', (err, address) => {
    if (err) {
       console.log('err:', err);
       process.exit(1);
