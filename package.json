@@ -6,7 +6,7 @@
   "scripts": {
     "test": "jest --passWithNoTests",
     "start": "node build/app.js",
-    "start:dev": "ts-node src/app.ts",
+    "start:dev": "nodemon src/app.ts",
     "build": "tsc"
   },
   "repository": {
@@ -29,6 +29,7 @@
   },
   "devDependencies": {
     "jest": "^24.9.0",
+    "nodemon": "^1.19.1",
     "ts-node": "^8.3.0"
   }
 }

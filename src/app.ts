@@ -6,7 +6,7 @@ const server: fastify.FastifyInstance<Server, IncomingMessage, ServerResponse> =
 const port: number = Number(process.env.PORT || 3000);
 
 server.get('/ping', (req, res) => {
-   res.send({ message: 'poooong' });
+   res.send({ message: 'max' });
 });
 
 server.listen(port, '0.0.0.0', (err, address) => {
