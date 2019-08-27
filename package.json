@@ -1,35 +1,39 @@
 {
-  "name": "group-listen",
-  "version": "1.0.0",
-  "description": "",
-  "main": "index.js",
-  "scripts": {
-    "test": "jest --passWithNoTests",
-    "start": "node build/app.js",
-    "start:dev": "nodemon src/app.ts",
-    "build": "tsc"
-  },
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/omaxanderson/group-listen.git"
-  },
-  "author": "",
-  "license": "ISC",
-  "bugs": {
-    "url": "https://github.com/omaxanderson/group-listen/issues"
-  },
-  "homepage": "https://github.com/omaxanderson/group-listen#readme",
-  "dependencies": {
-    "@types/node": "^12.7.2",
-    "babel": "^6.23.0",
-    "fastify": "^2.7.1",
-    "mysql": "^2.17.1",
-    "redis": "^2.8.0",
-    "typescript": "^3.5.3"
-  },
-  "devDependencies": {
-    "jest": "^24.9.0",
-    "nodemon": "^1.19.1",
-    "ts-node": "^8.3.0"
-  }
+   "name": "group-listen",
+   "version": "1.0.0",
+   "description": "",
+   "main": "index.js",
+   "scripts": {
+      "test": "jest --passWithNoTests",
+      "start": "ts-node src/index.ts",
+      "start:dev": "nodemon src/app.ts",
+      "build": "tsc"
+   },
+   "repository": {
+      "type": "git",
+      "url": "git+https://github.com/omaxanderson/group-listen.git"
+   },
+   "author": "",
+   "license": "ISC",
+   "bugs": {
+      "url": "https://github.com/omaxanderson/group-listen/issues"
+   },
+   "homepage": "https://github.com/omaxanderson/group-listen#readme",
+   "dependencies": {
+      "@types/node": "^12.7.2",
+      "babel": "^6.23.0",
+      "fastify": "^2.7.1",
+      "mongodb": "^3.3.1",
+      "redis": "^2.8.0",
+      "reflect-metadata": "^0.1.10",
+      "typeorm": "0.2.18",
+      "typescript": "^3.5.3"
+   },
+   "devDependencies": {
+      "jest": "^24.9.0",
+      "nodemon": "^1.19.1",
+      "ts-node": "3.3.0",
+      "@types/node": "^8.0.29",
+      "typescript": "3.3.3333"
+   }
 }
