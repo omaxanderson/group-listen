@@ -1,6 +1,9 @@
 {
    "type": "mongodb",
-   "database": "test",
+   "host": "localhost",
+   "port": 27017,
+   "database": "group_listen",
+   "useNewUrlParser": true,
    "synchronize": true,
    "logging": false,
    "entities": [
@@ -13,8 +16,8 @@
       "src/subscriber/**/*.ts"
    ],
    "cli": {
-      "entitiesDir": "src/entity",
-      "migrationsDir": "src/migration",
-      "subscribersDir": "src/subscriber"
+      "entitiesDir": "./src/entity",
+      "migrationsDir": "./src/migration",
+      "subscribersDir": "./src/subscriber"
    }
 }
