@@ -1,0 +1,13 @@
+version: "3.7"
+services:
+   server:
+      build: .
+      ports:
+         - "3000:3000"
+      volumes:
+         - ./:/app
+      environment:
+         - MYSQL_DB_USERNAME=username
+         - MYSQL_DB_PASSWORD=password
+      command: ["npm", "run", "start:dev"]
+
