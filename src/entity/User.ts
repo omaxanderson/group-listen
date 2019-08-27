@@ -3,16 +3,15 @@ import {Entity, ObjectIdColumn, ObjectID, Column} from "typeorm";
 @Entity()
 export class User {
 
-    @ObjectIdColumn()
-    id: ObjectID;
+   @ObjectIdColumn()
+   id: ObjectID;
 
-    @Column()
-    firstName: string;
+   @Column()
+   spotify_id: string;
 
-    @Column()
-    lastName: string;
+   @Column()
+   firstName: string;
 
-    @Column()
-    age: number;
-
+   @Column()
+   lastName: string;
 }

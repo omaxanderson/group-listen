@@ -3,7 +3,12 @@ import fastify from 'fastify';
 import fastifySession from 'fastify-session';
 import fastifyCookie from 'fastify-cookie';
 import { IncomingMessage, Server, ServerResponse } from 'http';
-import { getMongoManager, Connection, createConnection } from 'typeorm';
+import {
+   getMongoRepository,
+   getMongoManager,
+   Connection,
+   createConnection
+} from 'typeorm';
 import Queue from './entity/Queue';
 import { promises } from 'fs';
 import path from 'path';
@@ -44,6 +49,24 @@ import Api from './spotify_api/api';
       res.send({ message: 'max' });
    });
 
+   server.get('/createQueue', async (req, res) => {
+      const { id, songs } = req.query;
+      console.log(req.query);
+      console.log(songs);
+      const queue = new Queue();
+      queue.songs = songs;
+      queue.id = id;
+
+      const manager = getMongoManager();
+      try {
+         const result = await manager.save(queue);
+         return result;
+      } catch (e) {
+         console.log(e);
+         return e;
+      }
+   });
+
    server.get('/test', async (req, res) => {
       const queue = new Queue();
       queue.songs = ['song1', 'song2', 'Naeem'];
@@ -54,6 +77,18 @@ import Api from './spotify_api/api';
       } catch (e) {
          console.log(e);
          return e;
+      }
+   });
+
+   server.get('/a', async (req, res) => {
+      const { id = {} } = req.query;
+      console.log(id);
+      const manager = getMongoRepository(Queue);
+      try {
+         const result = await manager.find(id);
+         return result;
+      } catch (e) {
+         return { err: 'bad', ...e };
       }
    });
 
