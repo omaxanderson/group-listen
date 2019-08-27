@@ -4,3 +4,5 @@ node_modules/
 build/
 tmp/
 temp/
+client_secret.txt
+client_id.txt
