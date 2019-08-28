@@ -1,5 +1,5 @@
 import { Entity, ObjectIdColumn, Column } from "typeorm";
-import { Queue } from './Queue';
+import Queue from './Queue';
 
 @Entity()
 export class Party {
