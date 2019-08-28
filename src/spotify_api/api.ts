@@ -15,6 +15,15 @@ export interface ILoginParams extends ISpotifyOpts {
    redirect_uri: string;
 }
 
+export interface ISearchOpts {
+   query: string;
+   type: string;
+   market?: string;
+   limit?: number;
+   offset?: number;
+   include_external?: 'audio';
+}
+
 export default class SpotifyApi {
    public client_id: string;
    public client_secret: string;
@@ -83,5 +92,9 @@ export default class SpotifyApi {
          console.log(e);
          return false;
       }
+   }
+
+   public search = async (opts: ISearchOpts) => {
+
    }
 }

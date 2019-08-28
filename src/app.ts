@@ -1,4 +1,5 @@
 import "reflect-metadata";
+import IUser from './interfaces/IUser';
 import fastify from 'fastify';
 import fastifySession from 'fastify-session';
 import fastifyCookie from 'fastify-cookie';
@@ -46,6 +47,7 @@ import Api from './spotify_api/api';
    });
 
    server.get('/ping', (req, res) => {
+      let t: IUser;
       res.send({ message: 'max' });
    });
 
