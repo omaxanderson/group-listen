@@ -14,6 +14,7 @@ import Queue from './entity/Queue';
 import { promises } from 'fs';
 import path from 'path';
 import Api from './spotify_api/api';
+import spotifyRoutes from './routes/Spotify';
 
 (async () => {
    const server: fastify.FastifyInstance<Server, IncomingMessage, ServerResponse> = fastify({});
@@ -34,7 +35,7 @@ import Api from './spotify_api/api';
       process.exit(1);
    }
 
-   const api = new Api({ client_id, client_secret });
+   const api = new Api();
 
    server.register(fastifyCookie);
    server.register(fastifySession, {
@@ -45,6 +46,7 @@ import Api from './spotify_api/api';
       },
       saveUninitialized: true,
    });
+   server.register(spotifyRoutes);
 
    server.get('/ping', (req, res) => {
       let t: IUser;
@@ -94,10 +96,16 @@ import Api from './spotify_api/api';
       }
    });
 
+   server.get('/access', (req, res) => {
+       res.send({ access_token: req.session.access_token })
+   });
+
    server.get('/login', (req, res) => {
       api.authorize(req, res, {
+         client_id,
+         client_secret,
          redirect_uri: `http://${domain}:${port}/authorize`,
-         scopes: ['playlist-read-private'],
+         scopes: ['playlist-read-private', 'user-read-playback-state'],
       });
    });
 

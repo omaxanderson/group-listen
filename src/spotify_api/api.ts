@@ -5,7 +5,7 @@ export interface ISpotifyOpts {
    client_secret: string;
 }
 
-export interface IAuthorizeOpts {
+export interface IAuthorizeOpts extends ISpotifyOpts {
    redirect_uri: string;
    scopes?: string[];
 }
@@ -27,27 +27,31 @@ export interface ISearchOpts {
 export default class SpotifyApi {
    public client_id: string;
    public client_secret: string;
-
-   public constructor(opts: ISpotifyOpts) {
-      this.client_id = opts.client_id;
-      this.client_secret = opts.client_secret;
-   }
+   public endpoint: string = 'https://api.spotify.com/v1';
 
    public authorize = async (req, res, opts: IAuthorizeOpts): Promise<void> => {
-      const { scopes, redirect_uri } = opts;
+      const { scopes,
+         redirect_uri,
+         client_id,
+      } = opts;
       const url = 'https://accounts.spotify.com/authorize'
          + '?response_type=code'
-         + `&client_id=${this.client_id}`
+         + `&client_id=${client_id}`
          + (scopes ? `&scope=${encodeURIComponent(scopes.join(' '))}` : '')
          + `&redirect_uri=${redirect_uri}`.replace(/\s/g, '');
       res.redirect(url.replace(/\s/g, ''));
-   }
+   };
 
    public login = async (req, res, opts: ILoginParams): Promise<{
       access_token: string;
       refresh_token: string;
    } | false> => {
-      const { code, redirect_uri, client_id, client_secret } = opts;
+      const {
+         code,
+         redirect_uri,
+         client_id,
+         client_secret,
+      } = opts;
 
       const data = {
          grant_type: 'authorization_code',
@@ -55,7 +59,7 @@ export default class SpotifyApi {
          redirect_uri,
          client_id,
          client_secret,
-      }
+      };
 
       try {
          const result = await axios({
@@ -89,12 +93,79 @@ export default class SpotifyApi {
             refresh_token,
          };
       } catch (e) {
-         console.log(e);
+         console.log('error: ', e);
          return false;
       }
-   }
+   };
 
-   public search = async (opts: ISearchOpts) => {
+   public search = async (req, res) => {
+      const { q, type, market, limit, offset, include_external, } = req.query;
+      const { access_token } = req.session;
 
+      const url = `${this.endpoint}/search?`
+          + `q=${q}&type=${type}`
+          + `${market ? `&market=${market}` : ''}`
+          + `${limit ? `&limit=${limit}` : ''}`
+          + `${offset ? `&market=${offset}` : ''}`
+          + `${include_external ? `&include_external=${include_external}` : ''}`
+          + `&access_token=${access_token}`;
+
+      try {
+         return await this.makeRequest(url, { query: req.query, access_token }, 'get');
+      } catch (e) {
+          res.send(e);
+          return;
+      }
+   };
+
+   public getDevices = async (req, res) => {
+       try {
+          const { status, statusText, data } = await this.makeRequest(
+              `${this.endpoint}/me/player/devices`,
+              { access_token: req.session.access_token },
+          );
+          return data;
+       } catch (err) {
+          const { status, data } = err.response;
+          res.code(status);
+          return data;
+       }
+   };
+
+   private makeRequest = async (
+       url: string,
+       opts: { body?: Object; query?: Object, access_token: string },
+       method: string = 'get'
+   ) => {
+      const funcs = {
+         get: axios.get,
+         post: axios.post,
+      };
+      const func = funcs[method.toLowerCase()];
+
+      let queryParams = [];
+      if (opts.query && typeof opts.query === 'object') {
+         for (let [key, value] of Object.entries(opts.query)) {
+            queryParams.push(`${key}=${value}`);
+         }
+      }
+
+      const args: Array<string | Object> = [
+         `${url}?${encodeURIComponent(queryParams.join('&'))}&access_token=${opts.access_token}`,
+      ];
+
+      if (opts.body) {
+         args.push(opts.body);
+      }
+
+      const {
+         status,
+         statusText,
+         data,
+      } = await func(...args);
+      if (![200, 204].includes(status)) {
+         throw new Error(data);
+      }
+      return { status, statusText, data };
    }
 }
