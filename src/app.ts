@@ -15,6 +15,8 @@ import { promises } from 'fs';
 import path from 'path';
 import Api from './spotify_api/api';
 import spotifyRoutes from './routes/Spotify';
+import partyRoutes from './routes/Party';
+import Party from "./entity/Party";
 
 (async () => {
    const server: fastify.FastifyInstance<Server, IncomingMessage, ServerResponse> = fastify({});
@@ -46,29 +48,12 @@ import spotifyRoutes from './routes/Spotify';
       },
       saveUninitialized: true,
    });
-   server.register(spotifyRoutes);
+   server.register(spotifyRoutes, { prefix: '/spotify' });
+   server.register(partyRoutes, { prefix: '/party' });
 
    server.get('/ping', (req, res) => {
       let t: IUser;
       res.send({ message: 'max' });
-   });
-
-   server.get('/createQueue', async (req, res) => {
-      const { id, songs } = req.query;
-      console.log(req.query);
-      console.log(songs);
-      const queue = new Queue();
-      queue.songs = songs;
-      queue.id = id;
-
-      const manager = getMongoManager();
-      try {
-         const result = await manager.save(queue);
-         return result;
-      } catch (e) {
-         console.log(e);
-         return e;
-      }
    });
 
    server.get('/test', async (req, res) => {
@@ -97,7 +82,7 @@ import spotifyRoutes from './routes/Spotify';
    });
 
    server.get('/access', (req, res) => {
-       res.send({ access_token: req.session.access_token })
+      res.send({ access_token: req.session.access_token })
    });
 
    server.get('/login', (req, res) => {
@@ -133,12 +118,23 @@ import spotifyRoutes from './routes/Spotify';
 
    const setup = async () => {
       connection = await createConnection({
-         "type": "mongodb",
+         /*
+         "type": "mysql",
          "host": "localhost",
-         "port": 27017,
+         "port": 3306,
+         "username": "root",
+         "password": "maxanderson1",
          "database": "group_listen",
-         "useNewUrlParser": true,
-         "entities": [ Queue ],
+         //"entities": [ "./entity/*.ts" ],
+         "entities": [ Party, Queue, Song ],
+        */
+
+        "type": "mongodb",
+        "host": "localhost",
+        "port": 27017,
+        "database": "group_listen",
+        "useNewUrlParser": true,
+        "entities": [ Queue, Party ],
       });
    }
 
