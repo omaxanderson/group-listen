@@ -108,11 +108,11 @@ export default class SpotifyApi {
           + `${limit ? `&limit=${limit}` : ''}`
           + `${offset ? `&market=${offset}` : ''}`
           + `${include_external ? `&include_external=${include_external}` : ''}`
-          + `&access_token=${access_token}`;
 
       try {
-         return await this.makeRequest(url, { query: req.query, access_token }, 'get');
+         return await this.makeRequest(url, { access_token }, 'get');
       } catch (e) {
+         console.log("error occurred", e);
           res.send(e);
           return;
       }
@@ -137,6 +137,10 @@ export default class SpotifyApi {
        opts: { body?: Object; query?: Object, access_token: string },
        method: string = 'get'
    ) => {
+      const { body, query, access_token } = opts;
+     if (!access_token) {
+        throw new Error('Access token missing');
+     }
       const funcs = {
          get: axios.get,
          post: axios.post,

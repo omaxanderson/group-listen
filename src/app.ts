@@ -1,5 +1,5 @@
 import "reflect-metadata";
-import IUser from './interfaces/IUser';
+import IUser from './interfaces/spotify/IUser';
 import fastify from 'fastify';
 import fastifySession from 'fastify-session';
 import fastifyCookie from 'fastify-cookie';
@@ -48,6 +48,8 @@ import Party from "./entity/Party";
       },
       saveUninitialized: true,
    });
+
+   // Register routes
    server.register(spotifyRoutes, { prefix: '/spotify' });
    server.register(partyRoutes, { prefix: '/party' });
 

@@ -5,6 +5,7 @@ import {
     createConnection
 } from 'typeorm';
 import Party from '../entity/Party';
+import * as controller from '../classes/PartyController';
 import Queue from "../entity/Queue";
 
 interface ICreatePartyParams {
@@ -64,16 +65,11 @@ export default async (fastify, opts) => {
             res.code(400);
             return { error: 'Name paramater required' };
         }
-        const manager = getRepository(Party);
         try {
-            const party = await manager.findOne(req.params.id);
-            const members = [...new Set([...party.members, name])];
-            await manager.update(party.id.toString(), { members } );
-            return await manager.findOne(req.params.id);
+            return await controller.addMemberToParty({id, name});
         } catch (e) {
-            console.log(e.message);
-            res.code(400);
-            return { message: e.message}
+            res.code(500);
+            return { success: false, message: e.message };
         }
     });
 
@@ -91,9 +87,8 @@ export default async (fastify, opts) => {
             await manager.update(party.id.toString(), { members } );
             return await manager.findOne(id);
         } catch (e) {
-            console.log(e.message);
-            res.code(400);
-            return { message: e.message}
+            res.code(500);
+            return { success: false, message: e.message };
         }
     });
 
@@ -104,27 +99,16 @@ export default async (fastify, opts) => {
             res.code(400);
             return { message: 'Song or songs required' };
         }
-        const manager = getRepository(Party);
         try {
-            const { queue: oldQueue } = await manager.findOne(id);
-            console.log('song', song);
-            console.log('songs', songs);
-            console.log('oldQueue', oldQueue);
-            const allSongs = song
-              ? [...oldQueue, song]
-              : [...oldQueue, ...songs];
-            console.log('allSongs', allSongs);
-
-            const queue = allowDups
-              ? allSongs
-              : [...new Set(allSongs)];
-            console.log(JSON.stringify('queue', queue));
-            await manager.update(id, { queue });
-            return await manager.findOne(id);
+            if (song) {
+                return await controller.addSongToQueue({ id, song, allowDups, })
+            } else {
+                return await controller.addSongsToQueue({ id, songs, allowDups, })
+            }
         } catch (e) {
             console.log(e.message);
             res.code(400);
-            return { message: e.message}
+            return { success: false, message: e.message}
         }
     });
 
@@ -146,12 +130,9 @@ export default async (fastify, opts) => {
     // Delete queue
     fastify.post('/:id/queue/reset', async (req, res) => {
         const { id } = req.params;
-        const manager = getRepository(Party);
         try {
-            await manager.update(id, { queue: [] });
-            return await manager.findOne(id);
+            return await controller.resetQueue({ id });
         } catch (e) {
-            console.log(e.message);
             res.code(400);
             return { message: e.message}
         }
