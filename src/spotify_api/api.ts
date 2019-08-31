@@ -1,4 +1,5 @@
 import axios from 'axios';
+import IPaging from "../interfaces/spotify/IPagingObject";
 
 export interface ISpotifyOpts {
    client_id: string;
@@ -99,22 +100,23 @@ export default class SpotifyApi {
    };
 
    public search = async (req, res) => {
-      const { q, type, market, limit, offset, include_external, } = req.query;
       const { access_token } = req.session;
-
-      const url = `${this.endpoint}/search?`
-          + `q=${q}&type=${type}`
-          + `${market ? `&market=${market}` : ''}`
-          + `${limit ? `&limit=${limit}` : ''}`
-          + `${offset ? `&market=${offset}` : ''}`
-          + `${include_external ? `&include_external=${include_external}` : ''}`
+      const url = `${this.endpoint}/search`;
+      const queryParams = req.query;
 
       try {
-         return await this.makeRequest(url, { access_token }, 'get');
+         const data: { data: IPaging<Object> } = await this.makeRequest(url, { query: queryParams, access_token }, 'get');
+         return data;
       } catch (e) {
-         console.log("error occurred", e);
-          res.send(e);
-          return;
+        console.log(e);
+        if (e.response) {
+           const { error } = e.response.data;
+           console.log('error', error);
+           res.code(error.status);
+           return res.send({ success: false, message: error.message });
+        } else {
+            return res.send({ success: false, message: e.message });
+        }
       }
    };
 
@@ -155,21 +157,22 @@ export default class SpotifyApi {
       }
 
       const args: Array<string | Object> = [
-         `${url}?${encodeURIComponent(queryParams.join('&'))}&access_token=${opts.access_token}`,
+         `${url}?${queryParams.join('&')}&access_token=${opts.access_token}`,
       ];
 
       if (opts.body) {
          args.push(opts.body);
       }
 
-      const {
-         status,
-         statusText,
-         data,
-      } = await func(...args);
-      if (![200, 204].includes(status)) {
-         throw new Error(data);
+      try {
+         const {
+            status,
+            statusText,
+            data,
+         } = await func(...args);
+         return data;
+      } catch (e) {
+         throw new Error(e.message);
       }
-      return { status, statusText, data };
    }
 }

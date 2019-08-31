@@ -1,16 +1,16 @@
 import ICursor from "./ICursor";
 
-interface IPagingBase {
+interface IPagingBase<T> {
    href: string;
    // TODO create a type that consists
    // of the possible objects (albums, artists, tracks, etc)
-   items: Array<Object>;
+   items: Array<T>;
    limit: number;
    next: string;
    total: number;
 }
 
-export default interface IPaging extends IPagingBase {
+export default interface IPaging<T> extends IPagingBase<T> {
    offset: number;
    previous: string;
 }
