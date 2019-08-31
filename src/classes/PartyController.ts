@@ -14,13 +14,15 @@ export const addSongToQueue = async (opts: {
 }): Promise<Object> => {
   const { id, song, allowDups } = opts;
   const manager = getMongoManager();
+  const full = await manager.findOne(Party, id);
+  console.log(full);
   const { queue: oldQueue } = await manager.findOne(Party, id);
   const queue = allowDups
     ? [ ...oldQueue, song ]
     : [...new Set([ ...oldQueue, song ])];
   const { value } = await manager.findOneAndUpdate(
     Party,
-    ObjectId(id),
+    { _id: ObjectId(id) },
     { $set: { queue } },
   { returnOriginal: false }
   );
@@ -41,7 +43,7 @@ export const addSongsToQueue = async (opts: {
   const { value } = await manager.findOneAndUpdate(
     Party,
     // works { _id: ObjectId(id) },
-    ObjectId(id),
+    { _id: ObjectId(id) },
     { $set: { queue } },
     { returnOriginal: false }
   );
@@ -51,21 +53,45 @@ export const addSongsToQueue = async (opts: {
   return value;
 };
 
-export const addMemberToParty = async (opts: {
+// can probably do that for the queue too
+const updateMembers = async (opts: {
   id: string,
   name: string,
+  func: Function,
 }) => {
-  const { id, name } = opts;
+  const { id, name, func } = opts;
   const manager = getMongoManager();
   const { members: oldMembers } = await manager.findOne(Party, id);
-  const members = [ ...new Set([...oldMembers, name ]) ];
+  const members = func(oldMembers, name);
   const { value } = await manager.findOneAndUpdate(
     Party,
-    ObjectId(id),
+    { _id: ObjectId(id) },
     { $set: { members } },
     { returnOriginal: false }
   );
   return value;
+};
+
+export const addMemberToParty = async ({ id, name }: {
+  id: string,
+  name: string,
+}) => {
+  return await updateMembers({
+    id,
+    name,
+    func: (members, name) => [ ...new Set([...members, name])],
+  });
+};
+
+export const deleteMemberFromParty = async ({ id, name, }: {
+  id: string;
+  name: string;
+}) => {
+  return await updateMembers({
+    id,
+    name,
+    func: (members, name) => members.filter(m => m !== name),
+  });
 };
 
 export const resetQueue = async (opts: {
@@ -80,4 +106,11 @@ export const resetQueue = async (opts: {
     { returnOriginal: false },
   );
   return value;
+}
+
+export const playQueue = async (opts) => {
+  // send spotify request
+  // get owner user_id
+  // get song id
+  // send play request
 }

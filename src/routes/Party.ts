@@ -13,8 +13,6 @@ interface ICreatePartyParams {
     // later we're definitely going to want to add things here like basic setup settings
 }
 
-// const manager = getMongoManager();
-
 export default async (fastify, opts) => {
     fastify.get('/:id', async (req, res) => {
         const manager = getMongoManager();
@@ -80,12 +78,11 @@ export default async (fastify, opts) => {
             res.code(400);
             return { error: 'Name paramater required' };
         }
-        const manager = getRepository(Party);
         try {
-            const party = await manager.findOne(id);
-            const members = party.members.filter(m => m !== name);
-            await manager.update(party.id.toString(), { members } );
-            return await manager.findOne(id);
+          return await controller.deleteMemberFromParty({
+              id,
+              name,
+          });
         } catch (e) {
             res.code(500);
             return { success: false, message: e.message };
@@ -136,5 +133,9 @@ export default async (fastify, opts) => {
             res.code(400);
             return { message: e.message}
         }
+    });
+
+    fastify.post('/:id/play', async (req, res) => {
+        // play the queue
     });
 }
