@@ -1,5 +1,6 @@
 import axios from 'axios';
 import IPaging from "../interfaces/spotify/IPagingObject";
+import get from 'lodash/get';
 
 export interface ISpotifyOpts {
    client_id: string;
@@ -120,6 +121,37 @@ export default class SpotifyApi {
       }
    };
 
+   public proxy = async (req, res) => {
+      const path = req.params['*'];
+      const { query } = req;
+      const { access_token } = req.session;
+      if (!access_token) {
+         throw new Error('Access token required!');
+      }
+      const url = `${this.endpoint}/${path}`
+         + `?${Object.entries(query).map(([key, val]) => `${key}=${val}`).join('&')}`;
+      try {
+         const result = await this.makeRequest(url, { access_token }, 'get');
+         if (!result) {
+            return {
+               success: false,
+               message: 'idk',
+            };
+         }
+         console.log('returning from proxy');
+         return result;
+      } catch (e) {
+         console.log('returning error from proxy');
+         console.log('e proxy', e);
+         return {
+            success: false,
+            from: 'proxy',
+            message: e.message,
+         };
+      }
+   }
+
+
    public getDevices = async (req, res) => {
        try {
           const { status, statusText, data } = await this.makeRequest(
@@ -134,6 +166,12 @@ export default class SpotifyApi {
        }
    };
 
+   /**
+    *
+    * @param url
+    * @param opts
+    * @param method
+    */
    private makeRequest = async (
        url: string,
        opts: { body?: Object; query?: Object, access_token: string },
@@ -149,16 +187,15 @@ export default class SpotifyApi {
       };
       const func = funcs[method.toLowerCase()];
 
-      let queryParams = [];
-      if (opts.query && typeof opts.query === 'object') {
-         for (let [key, value] of Object.entries(opts.query)) {
-            queryParams.push(`${key}=${value}`);
-         }
-      }
+      const queryParams = query && Object.entries(query)
+        .map(([key, val]) => `${key}=${val}`)
+        .join('&');
+      console.log('queryParams', queryParams);
 
       const args: Array<string | Object> = [
-         `${url}?${queryParams.join('&')}&access_token=${opts.access_token}`,
+         `${url}${ !url.includes('?') ? '?' : ''}${queryParams || ''}&access_token=${opts.access_token}`,
       ];
+      console.log('args', JSON.stringify(args));
 
       if (opts.body) {
          args.push(opts.body);
@@ -170,9 +207,14 @@ export default class SpotifyApi {
             statusText,
             data,
          } = await func(...args);
+         console.log('returning data');
          return data;
       } catch (e) {
-         throw new Error(e.message);
+         console.log('throwing from make requrest');
+         console.log('e makerequest', e);
+         console.log('e data', e.response.data);
+         const message = get(e, 'response.data.error.message', 'An unexpected error occurred');
+         throw new Error(message);
       }
    }
 }

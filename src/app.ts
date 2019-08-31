@@ -18,6 +18,8 @@ import spotifyRoutes from './routes/Spotify';
 import partyRoutes from './routes/Party';
 import Party from "./entity/Party";
 
+const MemoryStore = require('connect-mongo')(fastifySession);
+
 (async () => {
    const server: fastify.FastifyInstance<Server, IncomingMessage, ServerResponse> = fastify({});
 
@@ -47,7 +49,11 @@ import Party from "./entity/Party";
          maxAge: 1000 * 60 * 60 * 6,
       },
       saveUninitialized: true,
+      store: new MemoryStore({
+         url: 'mongodb://localhost/group_listen',
+      }),
    });
+
 
    // Register routes
    server.register(spotifyRoutes, { prefix: '/spotify' });

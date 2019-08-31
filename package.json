@@ -23,9 +23,11 @@
    "dependencies": {
       "axios": "^0.19.0",
       "babel": "^6.23.0",
+      "connect-mongo": "git+https://github.com/omaxanderson/connect-mongo.git",
       "fastify": "^2.7.1",
       "fastify-cookie": "^3.1.0",
       "fastify-session": "^3.0.0",
+      "lodash": "^4.17.15",
       "mongodb": "^3.3.2",
       "mysql": "^2.17.1",
       "redis": "^2.8.0",
