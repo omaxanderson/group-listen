@@ -32,7 +32,8 @@ export default class SpotifyApi {
    public endpoint: string = 'https://api.spotify.com/v1';
 
    public authorize = async (req, res, opts: IAuthorizeOpts): Promise<void> => {
-      const { scopes,
+      const {
+         scopes,
          redirect_uri,
          client_id,
       } = opts;
@@ -100,49 +101,30 @@ export default class SpotifyApi {
       }
    };
 
-   public search = async (req, res) => {
-      const { access_token } = req.session;
-      const url = `${this.endpoint}/search`;
-      const queryParams = req.query;
-
-      try {
-         const data: { data: IPaging<Object> } = await this.makeRequest(url, { query: queryParams, access_token }, 'get');
-         return data;
-      } catch (e) {
-        console.log(e);
-        if (e.response) {
-           const { error } = e.response.data;
-           console.log('error', error);
-           res.code(error.status);
-           return res.send({ success: false, message: error.message });
-        } else {
-            return res.send({ success: false, message: e.message });
-        }
-      }
-   };
-
    public proxy = async (req, res) => {
-      const path = req.params['*'];
+      const path: string = req.params['*'];
       const { query } = req;
-      const { access_token } = req.session;
+      const { method } = req.raw;
+      const { access_token: sess_access_token } = req.session;
+      const access_token = sess_access_token || get(req, 'headers.authorization', '').split(' ')[1];
       if (!access_token) {
          throw new Error('Access token required!');
       }
       const url = `${this.endpoint}/${path}`
          + `?${Object.entries(query).map(([key, val]) => `${key}=${val}`).join('&')}`;
       try {
-         const result = await this.makeRequest(url, { access_token }, 'get');
-         if (!result) {
+         const result = await this.makeRequest(url, { access_token }, method);
+         if (!result || ![200, 204].includes(result.status)) {
             return {
                success: false,
                message: 'idk',
             };
          }
-         console.log('returning from proxy');
-         return result;
+         return result.data || {
+            success: true,
+            status: result.status,
+         };
       } catch (e) {
-         console.log('returning error from proxy');
-         console.log('e proxy', e);
          return {
             success: false,
             from: 'proxy',
@@ -150,21 +132,6 @@ export default class SpotifyApi {
          };
       }
    }
-
-
-   public getDevices = async (req, res) => {
-       try {
-          const { status, statusText, data } = await this.makeRequest(
-              `${this.endpoint}/me/player/devices`,
-              { access_token: req.session.access_token },
-          );
-          return data;
-       } catch (err) {
-          const { status, data } = err.response;
-          res.code(status);
-          return data;
-       }
-   };
 
    /**
     *
@@ -184,6 +151,7 @@ export default class SpotifyApi {
       const funcs = {
          get: axios.get,
          post: axios.post,
+         put: axios.put,
       };
       const func = funcs[method.toLowerCase()];
 
@@ -202,17 +170,9 @@ export default class SpotifyApi {
       }
 
       try {
-         const {
-            status,
-            statusText,
-            data,
-         } = await func(...args);
-         console.log('returning data');
-         return data;
+         const result = await func(...args);
+         return result;
       } catch (e) {
-         console.log('throwing from make requrest');
-         console.log('e makerequest', e);
-         console.log('e data', e.response.data);
          const message = get(e, 'response.data.error.message', 'An unexpected error occurred');
          throw new Error(message);
       }

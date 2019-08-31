@@ -98,7 +98,12 @@ const MemoryStore = require('connect-mongo')(fastifySession);
          client_id,
          client_secret,
          redirect_uri: `http://${domain}:${port}/authorize`,
-         scopes: ['playlist-read-private', 'user-read-playback-state'],
+         scopes: [
+           'playlist-read-private',
+            'user-read-playback-state',
+            'user-modify-playback-state',
+            'streaming'
+         ],
       });
    });
 
