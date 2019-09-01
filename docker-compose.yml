@@ -1,9 +1,20 @@
 version: "3.7"
+networks:
+   group-listen:
+      external: false
 services:
    server:
       image: omaxanderson/group-listen:latest
+      networks:
+         - group-listen
       ports:
          - "3000:3000"
       environment:
          - MYSQL_DB_USERNAME=username
          - MYSQL_DB_PASSWORD=password
+   mongo:
+      image: mongo:latest
+      networks:
+         - group-listen
+      ports:
+         - 27017:27017

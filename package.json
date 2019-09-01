@@ -5,7 +5,7 @@
    "main": "index.js",
    "scripts": {
       "test": "jest --passWithNoTests",
-      "start": "ts-node src/index.ts",
+      "start": "ts-node src/app.ts",
       "start:dev": "nodemon src/app.ts",
       "build": "tsc",
       "typeorm": "ts-node -r tsconfig-paths/register ./node_modules/typeorm/cli.js"
@@ -33,14 +33,13 @@
       "redis": "^2.8.0",
       "reflect-metadata": "^0.1.10",
       "typeorm": "0.2.18",
-      "typescript": "^3.5.3"
+      "typescript": "3.5.3"
    },
    "devDependencies": {
       "@types/node": "^12.7.2",
       "jest": "^24.9.0",
       "nodemon": "^1.19.1",
       "ts-node": "3.3.0",
-      "tsconfig-paths": "^3.8.0",
-      "typescript": "3.3.3333"
+      "tsconfig-paths": "^3.8.0"
    }
 }

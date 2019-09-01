@@ -15,6 +15,6 @@ export default interface IPaging<T> extends IPagingBase<T> {
    previous: string;
 }
 
-export interface ICursorPaging extends IPagingBase {
+export interface ICursorPaging<T> extends IPagingBase<T> {
    cursors: ICursor;
 }

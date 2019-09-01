@@ -3,6 +3,7 @@ import IImage from "./IImage";
 import IExternalUrl from "./IExternalUrl";
 import IFollowers from "./IFollowers";
 import IPaging from "./IPagingObject";
+import ITrack from "./ITrack";
 
 export interface IPlaylistSimplified {
    collaborative: boolean;
@@ -28,5 +29,5 @@ export default interface IPlaylist extends IPlaylistSimplified {
    description: string;
    followers: IFollowers;
    snapshot_id: string;
-   tracks: IPaging;
+   tracks: IPaging<ITrack>;
 }

@@ -143,7 +143,7 @@ const MemoryStore = require('connect-mongo')(fastifySession);
         */
 
         "type": "mongodb",
-        "host": "localhost",
+        "host": "0.0.0.0",
         "port": 27017,
         "database": "group_listen",
         "useNewUrlParser": true,
