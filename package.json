@@ -21,7 +21,7 @@
    },
    "homepage": "https://github.com/omaxanderson/group-listen#readme",
    "dependencies": {
-      "axios": "^0.19.0",
+      "axios": "^0.21.1",
       "babel": "^6.23.0",
       "connect-mongo": "git+https://github.com/omaxanderson/connect-mongo.git",
       "fastify": "^2.7.1",
